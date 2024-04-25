@@ -1,0 +1,13 @@
+.even-row {
+    background-color: #5C829F;
+    color: #fff;
+  }
+  
+
+  .table-row {
+    background-color: #5C829F;
+  }
+  
+  .table-row:hover {
+    background-color: #8CA7BF !important; /* Change to your desired hover color */
+  }
