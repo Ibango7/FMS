@@ -39,8 +39,6 @@ export interface LoginPayload {
     isLoggedIn: boolean;
   }
 
-
-
 export const AUTH_CONTEXT_INITIAL_STATE: IstateContext = {};
 export const AuthStateContext = createContext<IstateContext>(AUTH_CONTEXT_INITIAL_STATE);
 export const AuthActionContext = createContext<IActionContext>({} as any);

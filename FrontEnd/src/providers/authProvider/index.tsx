@@ -47,32 +47,41 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
     const login = (userInput: IAuthLogin): Promise<IAuthResponse> =>
       new Promise((resolve, reject) => {
         {
-          axios.post('https://localhost:44311/api/TokenAuth/Authenticate', userInput)
-          .then((response) =>{
-            setErrorLogin('');
-            setIsInProgress(false)
-            resolve(response.data);
-            console.log("Login response data",response.data);
-            const {result} = response.data;
-            const { accessToken, encryptedAccessToken, userId } = result;
-            const payload :LoginPayload = {
-              accessToken,
-              encryptedAccessToken,
-              userId,
-              isLoggedIn: true
-            }
-            dispatch(loginUserAction(payload));
-            localStorage.setItem('token', accessToken);
-            localStorage.setItem('userId', userId.toString());
-            localStorage.setItem('encryptedAccessToken', encryptedAccessToken);
-            localStorage.setItem('encryptedAccessToken', encryptedAccessToken);
 
-          })
-          .catch(e => {
-            setErrorLogin(e.message);
-            warningMessage();
-            // alert('Invalid Email or password');
-          });
+          const payload :LoginPayload = {
+                accessToken: '',
+                encryptedAccessToken:'',
+                userId: -1,
+                isLoggedIn: true
+              }
+
+          dispatch(loginUserAction(payload))
+          // axios.post('https://localhost:44311/api/TokenAuth/Authenticate', userInput)
+          // .then((response) =>{
+          //   setErrorLogin('');
+          //   setIsInProgress(false)
+          //   resolve(response.data);
+          //   console.log("Login response data",response.data);
+          //   const {result} = response.data;
+          //   const { accessToken, encryptedAccessToken, userId } = result;
+          //   const payload :LoginPayload = {
+          //     accessToken,
+          //     encryptedAccessToken,
+          //     userId,
+          //     isLoggedIn: true
+          //   }
+          //   dispatch(loginUserAction(payload));
+          //   localStorage.setItem('token', accessToken);
+          //   localStorage.setItem('userId', userId.toString());
+          //   localStorage.setItem('encryptedAccessToken', encryptedAccessToken);
+          //   localStorage.setItem('encryptedAccessToken', encryptedAccessToken);
+
+          // })
+          // .catch(e => {
+          //   setErrorLogin(e.message);
+          //   warningMessage();
+          //   // alert('Invalid Email or password');
+          // });
         }
       });
 

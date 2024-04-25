@@ -1,17 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Tabs, Form, Input, Button } from "antd";
 import styles from "./styles/login.module.scss";
 const { TabPane } = Tabs;
+import {
+  AuthActionContext,
+  IAuthLogin,
+} from "@/providers/authProvider/context";
+import { useRouter } from "next/navigation";
 
 const Login: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("login");
+  const { login } = useContext(AuthActionContext);
+  const router = useRouter();
 
   const handleTabChange = (key: string) => {
     setActiveTab(key);
   };
 
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const onFinish = async (values: any) => {
+    try {
+      const input: IAuthLogin = {
+        password: values.password,
+        userNameOrEmailAddress: values.email,
+      };
+      console.log("Success:", values);
+      const response = await login(input);
+    } catch (error) {
+      console.log("Error loging in", error);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -50,7 +66,9 @@ const Login: React.FC = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[{ required: true, message: "Please input your password!" }]}
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
             >
               <Input.Password />
             </Form.Item>
