@@ -1,13 +1,14 @@
 import React, { useState, useContext } from "react";
 import { Tabs, Form, Input, Button } from "antd";
 import styles from "./styles/login.module.scss";
-const { TabPane } = Tabs;
 import {
   AuthActionContext,
   IAuthLogin,
 } from "@/providers/authProvider/context";
 import { useRouter } from "next/navigation";
 
+
+const { TabPane } = Tabs;
 const Login: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const { login } = useContext(AuthActionContext);
@@ -23,10 +24,11 @@ const Login: React.FC = () => {
         password: values.password,
         userNameOrEmailAddress: values.email,
       };
-      console.log("Success:", values);
+      console.log("Received values from input:", input);
       const response = await login(input);
+      router.push("/home");
     } catch (error) {
-      console.log("Error loging in", error);
+      console.log("Error login in", error);
     }
   };
 
@@ -50,8 +52,8 @@ const Login: React.FC = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Username"
-              name="username"
+              label="Email"
+              name="email"
               rules={[
                 {
                   type: "email",
