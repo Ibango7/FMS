@@ -1,16 +1,27 @@
-'use client';
+"use client";
 import React, { useState } from "react";
-import { Button, Table, UploadProps, message, Upload, Modal, Input, Avatar } from "antd";
-import { PlusOutlined, UploadOutlined,FileOutlined } from "@ant-design/icons";
-import styles from './homeStyle.module.scss';
-import './style.css';
+import {
+  Button,
+  Table,
+  UploadProps,
+  message,
+  Upload,
+  Modal,
+  Input,
+  Avatar,
+} from "antd";
+import { PlusOutlined, UploadOutlined, FileOutlined } from "@ant-design/icons";
+import styles from "./homeStyle.module.scss";
+import "./style.css";
+import dynamic from "next/dynamic";
+import { editorData } from "../../components/custom-editor";
 
 const columns = [
   {
     title: "Icon",
     dataIndex: "icon",
     key: "icon",
-    render: () => <Avatar icon={<FileOutlined />} />
+    render: () => <Avatar icon={<FileOutlined />} />,
   },
   {
     title: "Name",
@@ -62,6 +73,13 @@ const props: UploadProps = {
   },
 };
 
+const CustomEditor = dynamic(
+  () => {
+    return import("../../components/custom-editor");
+  },
+  { ssr: false }
+);
+
 export default function HomePage() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
@@ -72,14 +90,15 @@ export default function HomePage() {
 
   const handleOk = () => {
     setIsModalVisible(false);
-    console.log("Content to save:",content);
+    console.log("Content to save:", editorData);
+
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  const handleContentChange = (e:any) => {
+  const handleContentChange = (e: any) => {
     setContent(e.target.value);
   };
 
@@ -97,30 +116,31 @@ export default function HomePage() {
         </Button>
         <Upload {...props}>
           <Button
-          className={styles.buttonStyle}  
-          type="default" icon={<UploadOutlined />}>
+            className={styles.buttonStyle}
+            type="default"
+            icon={<UploadOutlined />}
+          >
             Upload
           </Button>
         </Upload>
       </div>
       <Modal
+        width={800}
         title="Create Document"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Input.TextArea 
+        <CustomEditor initialData="<h1> Type your text in here </h1>"  />
+
+        {/* <Input.TextArea 
           rows={4} 
           placeholder="Enter your document text here"
           value={content} 
           onChange={handleContentChange} // Add onChange event to handle content change
-        />
+        /> */}
       </Modal>
-      <Table
-        rowClassName="table-row"
-        columns={columns}
-        dataSource={data}
-      />
+      <Table rowClassName="table-row" columns={columns} dataSource={data} />
     </div>
   );
 }

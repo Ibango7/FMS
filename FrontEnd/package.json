@@ -10,8 +10,10 @@
     "test": "jest"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-react": "^6.3.0",
     "antd": "^5.16.4",
     "axios": "^1.6.8",
+    "ckeditor5-custom-build": "file:src/ckeditor5",
     "jwt-decode": "^4.0.0",
     "next": "14.2.2",
     "react": "^18",

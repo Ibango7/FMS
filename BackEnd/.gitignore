@@ -254,3 +254,4 @@ paket-files/
 src/FMS.Web.Mvc/secrets.json
 src/FMS.Web.Host/secrets.json
 src/FMS.Migrator/secrets.json
+src/FMS.Application/secrets.json
