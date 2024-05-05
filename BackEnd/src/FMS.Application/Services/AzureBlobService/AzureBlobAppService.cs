@@ -8,6 +8,8 @@ using FMS.Services.AzureBlobService.Dto;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Abp.UI;
+using Azure;
+using System.Reflection.Metadata;
 
 namespace FMS.Services.AzureBlobService
 {
@@ -19,8 +21,8 @@ namespace FMS.Services.AzureBlobService
         private readonly IConfiguration _config;
         private readonly BlobServiceClient _blobServiceClient;
         private readonly BlobContainerClient _filesContainer;
-        private readonly string accessKey = " ";
-        string storageAccount = " ";
+        private readonly string accessKey = "";
+        string storageAccount = "";
 
         /// <summary>
         /// 
@@ -88,7 +90,43 @@ namespace FMS.Services.AzureBlobService
                 throw new UserFriendlyException($"No file provided");
             }
         }
-           
+
+        public async Task<BlobResponseDto> RenameAsync(string oldFileName, string newFileName)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(oldFileName) || string.IsNullOrWhiteSpace(newFileName))
+                {
+                    throw new ArgumentNullException("Both oldFileName and newFileName must be provided.");
+                }
+
+                BlobClient oldFile = _filesContainer.GetBlobClient(oldFileName);
+                BlobClient newFile = _filesContainer.GetBlobClient(newFileName);
+
+                if (await oldFile.ExistsAsync())
+                {
+                    await newFile.StartCopyFromUriAsync(oldFile.Uri);
+                    await oldFile.DeleteAsync();
+
+                    BlobResponseDto response = new();
+                    response.Status = $"File name changed Successfully";
+                    response.Error = false;
+                    response.Blob.Uri = newFile.Uri.AbsoluteUri;
+                    response.Blob.Name = newFileName;
+                    return response;
+                }
+                else
+                {
+                    throw new FileNotFoundException($"File '{oldFileName}' does not exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException($"Error occurred while renaming file: {ex.Message}");
+            }
+        }
+
+
 
         /// <summary>
         /// 

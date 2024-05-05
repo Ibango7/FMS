@@ -70,7 +70,6 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
             setErrorLogin("");
             setIsInProgress(false);
             resolve(response.data);
-            console.log("Login response data", response.data);
             const { result } = response.data;
             const { accessToken, encryptedAccessToken, userId } = result;
             const payload: LoginPayload = {
@@ -81,10 +80,7 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
             };
             dispatch(loginUserAction(payload));
             localStorage.setItem("token", accessToken);
-            console.log("Decoded token:", decodeToken(payload.accessToken));
-            // localStorage.setItem('userId', userId.toString());
-            // localStorage.setItem('encryptedAccessToken', encryptedAccessToken);
-            // localStorage.setItem('encryptedAccessToken', encryptedAccessToken);
+            localStorage.setItem('userId', userId.toString());
           })
           .catch((e) => {
             setErrorLogin(e.message);
@@ -96,13 +92,10 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
 
   const logout = async () => {
     // console.log("Before dispacthing...")
-    dispatch(logOutUserAction());
+    // dispatch(logOutUserAction());
+    console.log(" in logOut")
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    localStorage.removeItem("encryptedAccessToken");
-    localStorage.removeItem("userDetails");
-    localStorage.removeItem("books");
-    localStorage.removeItem("book");
   };
   //#endregion
   return (

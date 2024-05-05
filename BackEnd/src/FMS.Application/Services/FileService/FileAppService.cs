@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FMS.Services.FileService
@@ -54,7 +55,23 @@ namespace FMS.Services.FileService
             }  
         }
 
+        [HttpPut]
+        public async Task<string> RenameFile(string oldFileName, string newFileName, long userId) {
+            var fileMeta = await _fileRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.Title == oldFileName);
+            if (fileMeta == null) { throw new UserFriendlyException($"This file/user does not exist"); }
+
+            string extension = Path.GetExtension(oldFileName);
+            string  newFileNameWithExtension = $"{newFileName}{extension}";
+
+            var azureFile = await  _azureFileService.RenameAsync(oldFileName, newFileNameWithExtension);
+            fileMeta.Title = newFileNameWithExtension;
+            fileMeta.FileRef = azureFile.Blob.Uri;
+            await _fileRepository.UpdateAsync(fileMeta);
+            return $"Successfully renamed file from {oldFileName} to {newFileNameWithExtension}";
+        }
+
         // upload file
+        [HttpPost]
         public async Task<BlobResponseDto> UpLoad(IFormFile file, long userId) {
 
             // Store the file
@@ -93,16 +110,27 @@ namespace FMS.Services.FileService
         }
 
         // Download file
+        [HttpGet]
         public async Task<FileStreamResult> Download(string filename) {
-            var result =  await _azureFileService.DownloadAsync(filename);
-            var fileStream = result.Content; // stream representing the file content
-            var contentType = result.ContentType; // Content type of the file
-            var fileName = result.Name; // Name of the file
+            if (filename == null) { 
+                throw new UserFriendlyException(" no file specified"); 
+            }
+            try {
+                var result = await _azureFileService.DownloadAsync(filename);
+                var fileStream = result.Content; // stream representing the file content
+                var contentType = result.ContentType; // Content type of the file
+                var fileName = result.Name; // Name of the file
 
-            return new FileStreamResult(fileStream, contentType)
+                return new FileStreamResult(fileStream, contentType)
+                {
+                    FileDownloadName = fileName
+                };
+
+            } catch (Exception ex)
             {
-                FileDownloadName = fileName
-            };
+                throw new UserFriendlyException($"Could not download file: {ex.Message}");
+            }
+          
         }
 
 

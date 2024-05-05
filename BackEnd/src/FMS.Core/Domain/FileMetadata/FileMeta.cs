@@ -10,6 +10,7 @@ namespace FMS.Domain.FileMetadata
         public virtual string FileRef { get; set; }
         public virtual double? FileSize { get; set; }
         public virtual DateTime CreatedDate { get; set; }
+        public virtual bool isArchived { get; set; } = false;
 
         // Foreign Key
         public virtual long UserId { get; set; }

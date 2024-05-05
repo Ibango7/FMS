@@ -14,7 +14,8 @@ namespace FMS.Domain.FilePermissions
             CanEdit,
             CanDelete,
             CanDownload,
-            AsOwner
+            AsOwner,
+            CanSign
         }
         public virtual List<FilePermission> Permission { get; set; }
 

@@ -1,10 +1,11 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import { Layout, Menu } from "antd";
 import {
   FileOutlined,
   SolutionOutlined,
   FolderOutlined,
+  LogoutOutlined
 } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
@@ -13,12 +14,51 @@ import Search from "@/components/search";
 import Notification from "@/components/notification";
 import Link from "next/link";
 import AppProviders from "@/providers/appProviders/indext";
+import { AuthActionContext } from '@/providers/authProvider/context'
+import { useLogin } from "@/providers/authProvider";
+import { useRouter } from 'next/navigation'
+
+export const checkUser = () => {
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+  if(token && userId){
+    return true;
+  }
+  return false;
+}
+export const logOutUser = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("userId");
+}
+
+export const getCurrentUserId = () => {
+  const storedUserId = localStorage.getItem('userId');
+  if(storedUserId) {
+   const ans = parseInt(storedUserId);
+   return ans;
+  }
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { logout } = useContext(AuthActionContext);
+  const router = useRouter();
+
+  const handleLogOut = async () => {
+    if(checkUser()){
+      logOutUser();
+      router.push('/login');
+      console.log("logged out successfully");
+    }
+  }
+
+  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    handleLogOut();
+  }
   return (
     <AppProviders>
       <html lang="en">
@@ -47,6 +87,11 @@ export default function RootLayout({
                     <span className={styles.menuItem}>Archived Files</span>
                   </Link>
                 </Menu.Item>
+                <Menu.Item key="4" icon={<LogoutOutlined />}>
+                  <Link href="" onClick={handleClick}>
+                    <span className={styles.menuItem}>Log out</span>
+                  </Link>
+                </Menu.Item>
               </Menu>
             </Sider>
             <Layout style={{ padding: "0 24px 24px" }}>
@@ -68,3 +113,5 @@ export default function RootLayout({
     </AppProviders>
   );
 }
+
+

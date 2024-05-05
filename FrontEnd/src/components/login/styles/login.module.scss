@@ -1,19 +1,35 @@
 .loginContainer {
     display: flex;
+    height: 100vh;
+  }
+  
+  .leftSection {
+    flex: 1;
+    display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-}
-
-.loginForm {
-    width: 440px;
+  }
+  
+  .rightSection {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .Logo {
+    width: 400px; /* Adjust size as needed */
+    height: 450px;
+  }
+  
+  .loginForm {
+    width: 400px; /* Adjust width as needed */
     padding: 20px;
-    // border: 1px solid #d9d9d9;
     border-radius: 5px;
-    // background-color: #5C829F;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.loginFormButton {
+  }
+  
+  .loginFormButton {
     width: 100%;
-}
+  }
+  

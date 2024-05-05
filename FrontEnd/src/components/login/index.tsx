@@ -6,7 +6,9 @@ import {
   IAuthLogin,
 } from "@/providers/authProvider/context";
 import { useRouter } from "next/navigation";
-
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import Image from "next/image";
+import logo from "../../../public/assets/logo.png";
 
 const { TabPane } = Tabs;
 const Login: React.FC = () => {
@@ -38,48 +40,35 @@ const Login: React.FC = () => {
 
   return (
     <div className={styles.loginContainer}>
+    <div className={styles.leftSection}>
+      {/* Ant Design image */}
+      <Image src={logo} alt="Ant Design Logo" className={styles.Logo} />
+    </div>
+    <div className={styles.rightSection}>
       <Tabs activeKey={activeTab} onChange={handleTabChange} centered>
         <TabPane tab="Login" key="login">
           <Form
             className={styles.loginForm}
             name="loginForm"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
             initialValues={{ remember: true }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="Email"
               name="email"
-              rules={[
-                {
-                  type: "email",
-                  required: true,
-                  message: "Please input a valid email",
-                },
-              ]}
+              rules={[{ required: true, message: 'Please input your email!' }]}
             >
-              <Input />
+              <Input prefix={<UserOutlined />} placeholder="Email" />
             </Form.Item>
-
             <Form.Item
-              label="Password"
               name="password"
-              rules={[
-                { required: true, message: "Please input your password!" },
-              ]}
+              rules={[{ required: true, message: 'Please input your password!' }]}
             >
-              <Input.Password />
+              <Input.Password prefix={<LockOutlined />} placeholder="Password" />
             </Form.Item>
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className={styles.loginFormButton}
-              >
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className={styles.loginFormButton}>
                 Login
               </Button>
             </Form.Item>
@@ -89,65 +78,41 @@ const Login: React.FC = () => {
           <Form
             className={styles.loginForm}
             name="registerForm"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="Email"
               name="email"
-              rules={[
-                {
-                  type: "email",
-                  required: true,
-                  message: "Please input a valid email",
-                },
-              ]}
+              rules={[{ required: true, message: 'Please input your email!' }]}
             >
-              <Input />
+              <Input prefix={<UserOutlined />} placeholder="Email" />
             </Form.Item>
-
             <Form.Item
-              label="Password"
               name="password"
-              rules={[
-                { required: true, message: "Please input your password!" },
-              ]}
+              rules={[{ required: true, message: 'Please input your password!' }]}
             >
-              <Input.Password />
+              <Input.Password prefix={<LockOutlined />} placeholder="Password" />
             </Form.Item>
             <Form.Item
-              label="Confirm Password"
               name="confirmPassword"
-              dependencies={["password"]}
+              dependencies={['password']}
               rules={[
-                {
-                  required: true,
-                  message: "Please confirm your password!",
-                },
+                { required: true, message: 'Please confirm your password!' },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
+                    if (!value || getFieldValue('password') === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(
-                      new Error("The two passwords do not match!")
-                    );
+                    return Promise.reject(new Error('The two passwords do not match!'));
                   },
                 }),
               ]}
             >
-              <Input.Password />
+              <Input.Password prefix={<LockOutlined />} placeholder="Confirm Password" />
             </Form.Item>
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className={styles.loginFormButton}
-              >
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className={styles.loginFormButton}>
                 Register
               </Button>
             </Form.Item>
@@ -155,6 +120,7 @@ const Login: React.FC = () => {
         </TabPane>
       </Tabs>
     </div>
+  </div>
   );
 };
 
