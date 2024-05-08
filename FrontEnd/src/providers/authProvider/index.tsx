@@ -17,6 +17,7 @@ import {
   IAuthResponse,
 } from "./context";
 import { authReducer } from "./reducer";
+import { loadLoginAction, loadDoneLoginAction } from "./actions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { notification, Alert } from "antd";
@@ -61,8 +62,9 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
       ),
     });
   };
-  const login = (userInput: IAuthLogin): Promise<IAuthResponse> =>
-    new Promise((resolve, reject) => {
+  const login = (userInput: IAuthLogin): Promise<IAuthResponse> => {
+    dispatch(loadLoginAction());
+    return new Promise((resolve, reject) => {
       {
         axios
           .post("https://localhost:44311/api/TokenAuth/Authenticate", userInput)
@@ -78,22 +80,26 @@ const AuthProvider: FC<PropsWithChildren<any>> = ({ children }) => {
               userId,
               isLoggedIn: true,
             };
+
             dispatch(loginUserAction(payload));
             localStorage.setItem("token", accessToken);
-            localStorage.setItem('userId', userId.toString());
+            localStorage.setItem("userId", userId.toString());
+            dispatch(loadDoneLoginAction());
           })
           .catch((e) => {
             setErrorLogin(e.message);
             warningMessage();
+            dispatch(loadDoneLoginAction());
             // alert('Invalid Email or password');
           });
       }
     });
+  };
 
   const logout = async () => {
     // console.log("Before dispacthing...")
     // dispatch(logOutUserAction());
-    console.log(" in logOut")
+    console.log(" in logOut");
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
   };

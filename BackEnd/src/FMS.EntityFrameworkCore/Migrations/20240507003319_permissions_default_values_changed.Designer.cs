@@ -4,6 +4,7 @@ using FMS.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Migrations
 {
     [DbContext(typeof(FMSDbContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240507003319_permissions_default_values_changed")]
+    partial class permissions_default_values_changed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1585,9 +1588,6 @@ namespace FMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ArchivedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -1596,9 +1596,6 @@ namespace FMS.Migrations
 
                     b.Property<double?>("FileSize")
                         .HasColumnType("float");
-
-                    b.Property<Guid?>("SignatureId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -1610,8 +1607,6 @@ namespace FMS.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SignatureId");
 
                     b.HasIndex("UserId");
 
@@ -1636,7 +1631,7 @@ namespace FMS.Migrations
                     b.Property<bool?>("CanEdit")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("CanShare")
+                    b.Property<bool?>("CanSign")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("CanView")
@@ -1644,9 +1639,6 @@ namespace FMS.Migrations
 
                     b.Property<Guid>("FileId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("FileOwnerId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
@@ -1699,13 +1691,23 @@ namespace FMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("FileId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int?>("SignatureStatus")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("FileId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Signatures");
                 });
@@ -1994,17 +1996,11 @@ namespace FMS.Migrations
 
             modelBuilder.Entity("FMS.Domain.FileMetadata.FileMeta", b =>
                 {
-                    b.HasOne("FMS.Domain.signatures.Signature", "Signature")
-                        .WithMany()
-                        .HasForeignKey("SignatureId");
-
                     b.HasOne("FMS.Authorization.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Signature");
 
                     b.Navigation("User");
                 });
@@ -2045,6 +2041,25 @@ namespace FMS.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("FMS.Domain.signatures.Signature", b =>
+                {
+                    b.HasOne("FMS.Domain.FileMetadata.FileMeta", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FMS.Authorization.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FMS.MultiTenancy.Tenant", b =>

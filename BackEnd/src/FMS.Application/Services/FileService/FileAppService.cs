@@ -34,8 +34,6 @@ namespace FMS.Services.FileService
             _azureFileService = new AzureBlobAppService();
             _fileRepository = fileRepository;
             _userRepository = userRepository;
-
-
         }
         // List all files
         [HttpGet]
@@ -43,7 +41,7 @@ namespace FMS.Services.FileService
             try {
                 // only show blobs by this user
 
-                var userFiles = await _fileRepository.GetAllListAsync(b => b.UserId == userId);
+                var userFiles = await _fileRepository.GetAllListAsync(b => b.UserId == userId && b.isArchived !=true);
      
                 /*var result = await _azureFileService.ListAsync();
                 return result*/;
@@ -53,6 +51,70 @@ namespace FMS.Services.FileService
             {
                 throw new UserFriendlyException($"Failure showing all files: {ex.Message}");
             }  
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        /// <exception cref="UserFriendlyException"></exception>
+        [HttpGet]
+        public async Task<List<FileMetaDataDto>> GetArchivedFiles(long userId)
+        {
+            try {
+                var userFiles = await _fileRepository.GetAllListAsync(b => b.UserId == userId && b.isArchived == true);
+                return ObjectMapper.Map<List<FileMetaDataDto>>(userFiles);
+            } catch (Exception ex)
+            {
+                throw new UserFriendlyException($"Failure archived files: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        public async Task<List<FileMetaDataDto>> setArchiveFile(bool state, Guid fileId, long userId)
+        {
+          
+            try {
+                var file = await _fileRepository.FirstOrDefaultAsync(b => b.Id == fileId);
+
+                if (file == null) {
+                    throw new UserFriendlyException("No file with specified id exists");
+                }
+
+                file.isArchived = state;
+                if (state) { 
+                    file.ArchivedDate = DateTime.UtcNow;
+                }
+
+                await _fileRepository.UpdateAsync(file);
+                var userFiles = await _fileRepository.GetAllListAsync(b => b.UserId == userId && b.isArchived == true);
+                return ObjectMapper.Map<List<FileMetaDataDto>>(userFiles);
+
+            }
+            catch (Exception ex) {
+                throw new UserFriendlyException($"Error setting archive status of file {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public async Task<bool> isArchived(Guid FileId, long userId)
+        {
+
+            // Check if user has already rented the same book
+            var existingBooking = await _fileRepository.FirstOrDefaultAsync(b => b.Id == FileId && b.UserId == userId && b.isArchived == false);
+            if (existingBooking == null)
+            {
+                throw new UserFriendlyException("No entry exists");
+
+            }
+
+            if (existingBooking != null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         [HttpPut]

@@ -25,6 +25,7 @@ export interface IstateContext  {
     isInProgress?:any;
     error?:any;
     userInfo?:LoginPayload;
+    loadingLogin?:boolean
 }
 
 export interface IActionContext {

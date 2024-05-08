@@ -21,8 +21,8 @@ namespace FMS.Services.AzureBlobService
         private readonly IConfiguration _config;
         private readonly BlobServiceClient _blobServiceClient;
         private readonly BlobContainerClient _filesContainer;
-        private readonly string accessKey = "";
-        string storageAccount = "";
+        private readonly string accessKey = " ";
+        string storageAccount = " ";
 
         /// <summary>
         /// 

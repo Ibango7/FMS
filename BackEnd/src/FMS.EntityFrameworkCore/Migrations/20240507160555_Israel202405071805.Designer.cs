@@ -4,6 +4,7 @@ using FMS.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Migrations
 {
     [DbContext(typeof(FMSDbContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240507160555_Israel202405071805")]
+    partial class Israel202405071805
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1585,9 +1588,6 @@ namespace FMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("ArchivedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -1597,7 +1597,7 @@ namespace FMS.Migrations
                     b.Property<double?>("FileSize")
                         .HasColumnType("float");
 
-                    b.Property<Guid?>("SignatureId")
+                    b.Property<Guid>("SignatureId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
@@ -1644,9 +1644,6 @@ namespace FMS.Migrations
 
                     b.Property<Guid>("FileId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("FileOwnerId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
@@ -1705,7 +1702,12 @@ namespace FMS.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Signatures");
                 });
@@ -1996,7 +1998,9 @@ namespace FMS.Migrations
                 {
                     b.HasOne("FMS.Domain.signatures.Signature", "Signature")
                         .WithMany()
-                        .HasForeignKey("SignatureId");
+                        .HasForeignKey("SignatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FMS.Authorization.Users.User", "User")
                         .WithMany()
@@ -2045,6 +2049,17 @@ namespace FMS.Migrations
                     b.Navigation("Receiver");
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("FMS.Domain.signatures.Signature", b =>
+                {
+                    b.HasOne("FMS.Authorization.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FMS.MultiTenancy.Tenant", b =>

@@ -1,6 +1,5 @@
 ﻿using Abp.Domain.Entities;
 using FMS.Authorization.Users;
-using FMS.Domain.FileMetadata;
 using System;
 
 namespace FMS.Domain.signatures
@@ -13,15 +12,11 @@ namespace FMS.Domain.signatures
             Invalid,
             Pending 
         }
-
+        
         public virtual Status? SignatureStatus { get; set; }
-        // foreign key
-        public virtual long UserId { get; set; }
+       /* public virtual long UserId { get; set; }
         // navigation property
-        public virtual User User { get; set; }
+        public virtual User User { get; set; }*/
 
-        //Foreign Key
-        public virtual Guid FileId { get; set; }    
-        public virtual FileMeta File {  get; set; } 
     }
 }

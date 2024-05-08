@@ -28,6 +28,7 @@ namespace FMS.Services.FileService.Dto
         /// 
         /// </summary>
         public virtual DateTime CreatedDate { get; set; }
+        public virtual DateTime ArchivedDate { get; set; }
         /// <summary>
         /// 
         /// </summary>

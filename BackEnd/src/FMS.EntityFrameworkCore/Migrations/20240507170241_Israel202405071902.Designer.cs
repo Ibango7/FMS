@@ -4,6 +4,7 @@ using FMS.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Migrations
 {
     [DbContext(typeof(FMSDbContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240507170241_Israel202405071902")]
+    partial class Israel202405071902
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1644,9 +1647,6 @@ namespace FMS.Migrations
 
                     b.Property<Guid>("FileId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("FileOwnerId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");

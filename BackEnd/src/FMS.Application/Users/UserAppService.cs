@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
+using Abp.Collections.Extensions;
 using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
 using Abp.Extensions;
@@ -15,17 +16,18 @@ using Abp.Localization;
 using Abp.Runtime.Session;
 using Abp.UI;
 using FMS.Authorization;
-using FMS.Authorization.Accounts;
 using FMS.Authorization.Roles;
 using FMS.Authorization.Users;
 using FMS.Roles.Dto;
 using FMS.Users.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMS.Users
 {
-    [AbpAuthorize(PermissionNames.Pages_Users)]
+    /*[AbpAuthorize(PermissionNames.Pages_Users)]*/
     public class UserAppService : AsyncCrudAppService<User, UserDto, long, PagedUserResultRequestDto, CreateUserDto, UserDto>, IUserAppService
     {
         private readonly UserManager _userManager;
@@ -51,6 +53,48 @@ namespace FMS.Users
             _passwordHasher = passwordHasher;
             _abpSession = abpSession;
             _logInManager = logInManager;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<List<UserDto>> GetAllUsers()
+        {
+            var users = await Repository.GetAllListAsync();
+            if (users.Count <= 0)
+            {
+                throw new UserFriendlyException("Email not found");
+            }
+            return ObjectMapper.Map<List<UserDto>>(users);
+        }
+
+
+        [HttpGet]
+        public async Task<List<User>> SearchEmail([FromQuery] string req)
+        {
+            var queryResult = Repository.GetAll().AsQueryable();
+            queryResult = queryResult.Where(a =>
+            a.EmailAddress.Contains(req));
+            var answer = queryResult.ToList();
+            if (answer.Count <= 0) {
+                throw new UserFriendlyException("Email not found");
+            }
+            return answer;
+        }
+
+        [HttpGet]
+        public  async Task<User> GetUserByEmail(string email)
+        {
+            var user = await Repository.FirstOrDefaultAsync(b => b.EmailAddress == email);
+            if (user == null)
+            {
+                throw new UserFriendlyException("No email found");
+            }
+
+            return user; // ObjectMapper.Map<UserDto>(user);
         }
 
         public override async Task<UserDto> CreateAsync(CreateUserDto input)

@@ -5,7 +5,7 @@ import {
   FileOutlined,
   SolutionOutlined,
   FolderOutlined,
-  LogoutOutlined
+  LogoutOutlined,
 } from "@ant-design/icons";
 
 const { Sider, Content } = Layout;
@@ -14,30 +14,30 @@ import Search from "@/components/search";
 import Notification from "@/components/notification";
 import Link from "next/link";
 import AppProviders from "@/providers/appProviders/indext";
-import { AuthActionContext } from '@/providers/authProvider/context'
+import { AuthActionContext } from "@/providers/authProvider/context";
 import { useLogin } from "@/providers/authProvider";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 export const checkUser = () => {
-  const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId');
-  if(token && userId){
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  if (token && userId) {
     return true;
   }
   return false;
-}
+};
 export const logOutUser = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
-}
+};
 
 export const getCurrentUserId = () => {
-  const storedUserId = localStorage.getItem('userId');
-  if(storedUserId) {
-   const ans = parseInt(storedUserId);
-   return ans;
+  const storedUserId = localStorage.getItem("userId");
+  if (storedUserId) {
+    const ans = parseInt(storedUserId);
+    return ans;
   }
-}
+};
 
 export default function RootLayout({
   children,
@@ -48,17 +48,17 @@ export default function RootLayout({
   const router = useRouter();
 
   const handleLogOut = async () => {
-    if(checkUser()){
+    if (checkUser()) {
       logOutUser();
-      router.push('/login');
+      router.push("/login");
       console.log("logged out successfully");
     }
-  }
+  };
 
   const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     handleLogOut();
-  }
+  };
   return (
     <AppProviders>
       <html lang="en">
@@ -74,20 +74,25 @@ export default function RootLayout({
               >
                 <Menu.Item key="1" icon={<FileOutlined />}>
                   <Link href="/home">
-                    <span className={styles.menuItem}>All Files</span>
+                    <span className={styles.menuItem}>My Files</span>
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="2" icon={<SolutionOutlined />}>
+                <Menu.Item key="2" icon={<FileOutlined />}>
+                  <Link href="/home/shared">
+                    <span className={styles.menuItem}>Shared</span>
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="3" icon={<SolutionOutlined />}>
                   <Link href="/home/signatures">
                     <span className={styles.menuItem}>Signatures</span>
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="3" icon={<FolderOutlined />}>
+                <Menu.Item key="4" icon={<FolderOutlined />}>
                   <Link href="/home/archived">
                     <span className={styles.menuItem}>Archived Files</span>
                   </Link>
                 </Menu.Item>
-                <Menu.Item key="4" icon={<LogoutOutlined />}>
+                <Menu.Item key="5" icon={<LogoutOutlined />}>
                   <Link href="" onClick={handleClick}>
                     <span className={styles.menuItem}>Log out</span>
                   </Link>
@@ -113,5 +118,3 @@ export default function RootLayout({
     </AppProviders>
   );
 }
-
-
