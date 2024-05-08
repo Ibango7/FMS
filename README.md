@@ -28,3 +28,20 @@ File Management Service: Handles file upload, creation, retrieval, and permissio
 Notification Service: Sends notifications to users about file updates, access requests, etc.
 Signature Issue Service: Manages the issuance and verification of digital signatures for files.
 Permissions Service: Manages granular access control mechanisms and access requests.
+
+Technologies
+* React and NextJ
+* c#/.Net
+* NodeJs
+* Langchain
+* ABP
+* Azure
+
+## Documentation:
+[See documentation here](https://docs.google.com/document/d/19jJXJlgsrTBgW9l2pEaO1g2hg9X18KMha-HLN9avT6I/edit)
+
+  
+  # # How to run the application
+* run npm install in the directory of the projetct
+* npm run dev
+
